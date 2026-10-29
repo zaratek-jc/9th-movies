@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listening Activity: Movie Discussion</title>
+  <style>
+    :root {
+      --oxford-blue: #002147;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-color: #1e293b;
+      --border-color: #cbd5e1;
+      --success: #16a34a;
+      --error: #dc2626;
+      --word-chip-bg: #e0f2fe;
+      --word-chip-border: #0284c7;
+      --word-chip-text: #0369a1;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding-bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Header Banner */
+    .header-banner {
+      background-color: var(--oxford-blue);
+      color: #ffffff;
+      width: 100%;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      margin-bottom: 24px;
+    }
+
+    .header-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      color: #ffffff;
+    }
+
+    .header-subtitle {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #93c5fd;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 900px;
+      width: calc(100% - 32px);
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    }
+
+    .instruction {
+      font-size: 1.05rem;
+      color: #475569;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 20px;
+      background: #f1f5f9;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary);
+    }
+
+    /* Student Info Panel */
+    .info-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      align-items: center;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .input-group label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+
+    .input-group input, .input-group select {
+      padding: 9px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      background-color: #ffffff;
+    }
+
+    .input-group input:focus, .input-group select:focus {
+      border-color: var(--primary);
+    }
+
+    .timer-display {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: #eff6ff;
+      padding: 10px 12px;
+      border-radius: 6px;
+      text-align: center;
+      border: 1px solid #bfdbfe;
+    }
+
+    /* Audio Player */
+    .audio-player-card {
+      background: #1e293b;
+      color: white;
+      padding: 18px 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .audio-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .audio-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .audio-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .speed-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+    }
+
+    .speed-label {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .speed-btn {
+      background: transparent;
+      color: #cbd5e1;
+      border: 1px solid #475569;
+      padding: 4px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .speed-btn:hover {
+      background: #334155;
+      color: white;
+    }
+
+    .speed-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Word Bank Pool */
+    .word-bank-section {
+      background: #f1f5f9;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 24px;
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .word-bank-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .word-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 50px;
+    }
+
+    .word-chip {
+      background-color: var(--word-chip-bg);
+      color: var(--word-chip-text);
+      border: 1px solid var(--word-chip-border);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: grab;
+      user-select: none;
+      transition: transform 0.15s, box-shadow 0.15s, background-color 0.2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .word-chip:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      background-color: #bae6fd;
+    }
+
+    .word-chip.dragging {
+      opacity: 0.4;
+      cursor: grabbing;
+    }
+
+    .word-chip.selected {
+      outline: 3px solid var(--primary);
+      background-color: #7dd3fc;
+    }
+
+    /* Dialogue Section */
+    .dialogue-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      line-height: 2.2;
+      font-size: 1.05rem;
+    }
+
+    .dialogue-line {
+      margin-bottom: 16px;
+    }
+
+    .speaker {
+      font-weight: 800;
+      color: var(--oxford-blue);
+      margin-right: 6px;
+    }
+
+    /* Drop Zones */
+    .drop-zone {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 120px;
+      height: 34px;
+      padding: 2px 10px;
+      border-bottom: 2px dashed var(--primary);
+      background-color: #f8fafc;
+      border-radius: 6px;
+      margin: 0 4px;
+      vertical-align: middle;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .drop-zone.drag-over {
+      background-color: #dbeafe;
+      border-color: var(--primary-hover);
+      transform: scale(1.03);
+    }
+
+    .drop-zone.filled {
+      border: 1px solid var(--word-chip-border);
+      background-color: var(--word-chip-bg);
+      color: var(--word-chip-text);
+      font-weight: 600;
+      border-bottom-width: 2px;
+    }
+
+    .drop-zone.correct {
+      background-color: #dcfce7 !important;
+      border-color: var(--success) !important;
+      color: #15803d !important;
+    }
+
+    .drop-zone.incorrect {
+      background-color: #fee2e2 !important;
+      border-color: var(--error) !important;
+      color: #b91c1c !important;
+      text-decoration: line-through;
+    }
+
+    /* Action Buttons */
+    .action-bar {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: #64748b;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #475569;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #15803d;
+    }
+
+    /* Modal Results */
+    .results-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .results-content {
+      background: white;
+      padding: 32px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    .score-badge {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 16px 0;
+    }
+
+    .motivation-msg {
+      font-size: 1.1rem;
+      color: #334155;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      .header-title { font-size: 1.6rem; }
+      .header-subtitle { font-size: 1.05rem; }
+      .container { padding: 16px; }
+      .drop-zone { min-width: 90px; }
+      .word-bank-section { position: relative; top: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header-banner">
+  <h1 class="header-title">COLEGIO SAN IGNACIO</h1>
+  <div class="header-subtitle">9th grade Listening Activity</div>
+</header>
+
+<div class="container">
+  <div class="instruction">
+    🎧 Listen to the dialogue and drag (or tap) the correct words into the missing gaps.
+  </div>
+
+  <!-- Student Info -->
+  <div class="info-card">
+    <div class="input-group">
+      <label for="student-course">Curso</label>
+      <select id="student-course">
+        <option value="">-- Selecciona Curso --</option>
+        <option value="9th grade A">9th grade A</option>
+        <option value="9th grade B">9th grade B</option>
+        <option value="9th grade C">9th grade C</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="student-name">Estudiante</label>
+      <select id="student-name" disabled>
+        <option value="">-- Primero selecciona curso --</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="activity-date">Fecha</label>
+      <input type="date" id="activity-date">
+    </div>
+    <div class="timer-display" id="timer">Time: 00:00</div>
+  </div>
+
+  <!-- Audio Player -->
+  <div class="audio-player-card">
+    <div class="audio-controls">
+      <button class="audio-btn" id="play-btn">▶ Play</button>
+      <button class="audio-btn" id="pause-btn">⏸ Pause</button>
+      <button class="audio-btn" id="repeat-btn">🔄 Replay</button>
+
+      <div class="speed-controls">
+        <span class="speed-label">Speed:</span>
+        <button class="speed-btn active" data-speed="1.0">1.0x</button>
+        <button class="speed-btn" data-speed="0.8">0.8x</button>
+        <button class="speed-btn" data-speed="0.6">0.6x</button>
+      </div>
+
+      <span id="audio-status" style="font-size: 0.88rem; color: #cbd5e1;">Ready to listen</span>
+    </div>
+    <audio id="html-audio" src="movies.mp3" preload="auto"></audio>
+  </div>
+
+  <!-- Word Bank -->
+  <div class="word-bank-section">
+    <div class="word-bank-title">
+      <span>Word Bank (Drag or click a word, then click a gap)</span>
+      <span id="word-count-badge" style="color: var(--primary);">41 remaining</span>
+    </div>
+    <div class="word-bank" id="word-bank">
+      <!-- Dynamically generated chips -->
+    </div>
+  </div>
+
+  <!-- Interactive Dialogue -->
+  <div class="dialogue-card">
+    <div class="dialogue-line">
+      <span class="speaker">Hugh:</span> Are you <span class="drop-zone" data-answer="serious"></span> right now? You guys have never seen Mad Max: Fury Road? It’s literally two hours of <span class="drop-zone" data-answer="non-stop explosion"></span>, modified hot rods, and a guy playing a <span class="drop-zone" data-answer="flamethrower"></span> guitar on top of a giant truck! That's so wild!
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lorena:</span> A flamethrower guitar? Hugh, that sounds totally <span class="drop-zone" data-answer="ridiculous"></span>. That’s gross, honestly... imagine the <span class="drop-zone" data-answer="fuel smell"></span>!
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lucas:</span> Actually, the practical <span class="drop-zone" data-answer="effects"></span> in that film are incredible, Hugh. But come on, if we are talking about <span class="drop-zone" data-answer="iconic movie scenes"></span>, nothing beats the <span class="drop-zone" data-answer="opening scene"></span> of 2001: A Space Odyssey. When the <span class="drop-zone" data-answer="monolith"></span> appears and the <span class="drop-zone" data-answer="apes"></span> start using tools to that incredible classical music... it makes you think about human evolution, <span class="drop-zone" data-answer="consciousness"></span>, and the cosmos.
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Hugh:</span> 2001? Dude, no way! I watched ten minutes of that and almost fell <span class="drop-zone" data-answer="asleep"></span>! Nothing happened! Where are the car <span class="drop-zone" data-answer="chases"></span>? The hand-to-hand combat?
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lorena:</span> Hey, leave Lucas alone! His dad <span class="drop-zone" data-answer="named him after"></span> George Lucas, so he’s legally obligated to love <span class="drop-zone" data-answer="floating space"></span> rocks and slow camera pans.
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lucas:</span> Very funny, Lorena. But sci-fi isn't just space rocks! Look at Star Wars. The <span class="drop-zone" data-answer="plot twist"></span> in The Empire Strikes Back—when Darth Vader tells Luke the <span class="drop-zone" data-answer="truth"></span> about his father—is <span class="drop-zone" data-answer="peak"></span> storytelling. The cinematography, the <span class="drop-zone" data-answer="shadowy"></span> lighting on Cloud City... it gives me chills every time.
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lorena:</span> Now that I can <span class="drop-zone" data-answer="appreciate"></span>. Speaking of lighting, have either of you actually watched Casablanca or Psycho?
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Hugh:</span> Black-and-white films? Are you <span class="drop-zone" data-answer="kidding"></span>? Everything looks so gray and <span class="drop-zone" data-answer="ancient"></span>!
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lorena:</span> That’s where you’re wrong! In black-and-white cinema, director use <span class="drop-zone" data-answer="shadow and light"></span>—what we call chiaroscuro in <span class="drop-zone" data-answer="art class"></span>—to show emotion. In Psycho, the famous shower scene with the dramatic music <span class="drop-zone" data-answer="stabbing"></span> in the background? That’s sick! It’s way scarier than modern <span class="drop-zone" data-answer="CGI monsters"></span> because your brain fills in the missing details.
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lucas:</span> She has a point, Hugh. Shadows create <span class="drop-zone" data-answer="suspense"></span>. It’s like a visual philosophy—what you don't see is as important as what you do see.
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Hugh:</span> Okay, okay, <span class="drop-zone" data-answer="fair point"></span> about suspense. But give me real action any day! Remember The Dark Knight when Batman <span class="drop-zone" data-answer="flips"></span> that massive semi-truck upside down in the middle of the street? They actually flipped a real truck on <span class="drop-zone" data-answer="location"></span> in Chicago! No green screen!
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lorena:</span> Wait, really? A real truck flip? That’s sick!
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lucas:</span> Yeah, Christopher Nolan loves <span class="drop-zone" data-answer="practical stunt work"></span> over full digital animation. It <span class="drop-zone" data-answer="grounds"></span> the audience in reality, which makes the <span class="drop-zone" data-answer="storyline"></span> feel much more intense.
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Hugh:</span> Exactly! My heart was <span class="drop-zone" data-answer="pounding"></span> in the theater. That's what movies are all about—feeling the <span class="drop-zone" data-answer="rush"></span>!
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lorena:</span> Well, whether it’s a giant truck flip, a silent space station, or a suspenseful dark shadow, a great scene is just <span class="drop-zone" data-answer="unforgettable"></span>.
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lucas:</span> Definitely. Movies are basically modern <span class="drop-zone" data-answer="mythology"></span>.
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Hugh:</span> All I know is we are having a movie <span class="drop-zone" data-answer="marathon"></span> this weekend. My house, 7 PM.
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lorena:</span> Deal! But only if we watch a <span class="drop-zone" data-answer="classic"></span> first.
+    </div>
+    <div class="dialogue-line">
+      <span class="speaker">Lucas:</span> As long as we follow it up with a <span class="drop-zone" data-answer="space opera"></span>, I'm in!
+    </div>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="action-bar">
+    <button class="btn btn-primary" id="check-btn">✔ Check Answers</button>
+    <button class="btn btn-secondary" id="reset-btn">🔄 Try Again</button>
+    <button class="btn btn-success" id="download-btn">📥 Download Report</button>
+  </div>
+</div>
+
+<!-- Modal Results -->
+<div class="results-modal" id="results-modal">
+  <div class="results-content">
+    <h2>Activity Completed!</h2>
+    <div class="score-badge" id="score-display">[0/41]</div>
+    <p class="motivation-msg" id="motivation-display"></p>
+    <button class="btn btn-primary" style="margin: 0 auto;" onclick="closeModal()">Close & Review</button>
+  </div>
+</div>
+
+<script>
+  // Student Database for 9th grade
+  const studentsData = {
+    "9th grade A": [
+      "Acevedo Ponce Felipe Ademar", "Aguilar Becerra Antonia", "Alarcón Quiroz Andrés Felipe",
+      "Alvarado Ortiz Isidora Pilar", "Castillo Turres Catalina Sofía", "Cavieres Pasmino Eloísa Mercedes",
+      "Centonzio Calderón Emily Raffaella", "Contreras San Martín Eva Ignacia", "Figueroa González María Consuelo",
+      "Fuenzalida Parra Pedro", "Galdames Durán Francisca Antonia", "Gatica Knaak Vicente Ignacio",
+      "González Encina Santiago Vicente", "Inzunza Cifuentes Nicolás Guillermo", "Lagos Urra Leticia Carolina", "Mouat Aburto Martina Paz",
+      "Orellana Beltrán Monserrat Francisca", "Ortiz Donoso Matilda Florencia", "Pfeng Gaspar Laura Amalia",
+      "Pinochet Pinochet Alonso Eduardo", "Pinto Bastías Inti Benjamín", "Pizarro Paredes Sofía Ignacia",
+      "Plaza Pereira Martín Alejandro", "Ponce Melero Francisca Ignacia", "Quinteros Mondiglio Raimundo Patricio",
+      "Ramírez Bravo Francisco", "Ramírez Palacios Daniel Esteban", "Rivera Tudela Ignacio Alonso",
+      "Riveros Reveco Amanda", "Rojas Albornoz Benjamín Alejandro", "Rubio Núñez Leonardo Alonso",
+      "Soto Neira Amancay Rocío", "Valdés Velásquez Max Alejandro", "Valencia Zuzunaga Dhiamet Stefan",
+      "Vergara Montenegro Rafaela Sofía", "Vergara Rojas Sofía María Susana", "Vides Correa María Paz",
+      "Zapata Arancibia Agustín Andrés"
+    ],
+    "9th grade B": [
+      "Alarcón Vielma Maximiliano", "Amigo Piceros Amaro Jesús", "Aravena Albornoz Carlos Arturo",
+      "Barrera Jaque Santiago Ernesto", "Carrasco Lazo Emilia Ignacia", "Cornejo Cáceres Laura Elena",
+      "Eyzaguirre Silva Josefa Ignacia", "Farías Andrade Arturo Daniel", "Fonseca Chong Matilda Isidora",
+      "Fredes Silva Martina Sofía", "García Ávila Rafaela Amparo", "García Isla Cristóbal",
+      "Henríquez Miranda Matías Francisco", "Leal Guzmán Álvaro Fernando", "Luengo Valencia Lucas Fabián",
+      "Méndez Sáez Catalina Ignacia", "Mora Palma Victoria Alejandra", "Nilo Miranda Rosario",
+      "Ojeda Vera Joaquín Ignacio", "Olea Solís Eloísa Antonia", "Olivares Fincheira Guillermo Tomás",
+      "Padilla Burchard Felipe Ignacio", "Páez Hidalgo Montserrat Ignacia", "Palacios Solari Javier Agustín",
+      "Quiroz Peña Agustina", "Riveros Álvarez Diego Arturo", "Rojas Edmonds Florencia Antonia Angélica",
+      "San Martín Arias Magdalena Esperanza", "Sánchez Moraga Cristóbal Arturo", "Sarria Astudillo Esteban Alonso",
+      "Stager Aguilera Francisca Emilia", "Valdenegro Román Vicente Maximiliano", "Valderas Ortega Facundo Nicanor",
+      "Valenzuela González José Tomás", "Vermeer Gutiérrez Anouk", "Villagra Alarcón Sofía Antonieta"
+    ],
+    "9th grade C": [
+      "Aburto Romero Diego Esteban", "Araya Escalona María Jesús", "Bravo Zapata Isidora Francisca",
+      "Cáceres Arredondo Isidora Montserrat", "Castillo Reichhardt Valentín", "Espinosa Bravo Carlos Joaquín",
+      "Espinoza Ojeda Camila Ignacia", "Evert Quinteros Alisson Fernanda", "González Marzán Mateo Alfredo",
+      "Hernández Martínez Francisco Javier", "Hiplan Godoy Santino Luis", 
+      "Leal Rubio Isidora Ignacia", "Montenegro Ramos Ignacio", "Moya Madero Joaquín Esteban",
+      "Navarro Bravo Amanda Sofía", "Osorio Vivar Víctor André", "Pavez Veliz Clemente",
+      "Pinto Celis Martín Ignacio", "Poblete Espinoza Florencia Antonia", "Prieto Alarcón Mayte Antonia",
+      "Ramírez Ávila Abril Lucía", "Reveco Rojas Ignacia", "Riffo Fernández Agustín Alonso",
+      "Salazar Quiroga Simón Ismael", "Salinas Gómez Isidora Agustina", "Sandoval Acevedo Javiera Ignacia",
+      "Schüller Vásquez Santiago Ernesto", "Seccia Orellana Ignacio Agustín", "Seisdedos Carvajal Loreto Paz",
+      "Solorzano Torres Mateo Gaspar", "Valdés Oyarzún Moira Carolina Denisse", "Veliz Joo Consuelo Alejandra",
+      "Villena Arriagada Javiera Paz", "Zegers Silva Amelia", "Zurita Bustos Franco Salvador"
+    ]
+  };
+
+  // Target answers: taken directly from the gaps in the dialogue
+  const targetWords = [...document.querySelectorAll(".drop-zone")].map(z => z.dataset.answer);
+
+  let selectedChip = null;
+  let timerInterval = null;
+  let secondsElapsed = 0;
+  let isTimerRunning = false;
+
+  // DOM Elements
+  const wordBank = document.getElementById("word-bank");
+  const dropZones = document.querySelectorAll(".drop-zone");
+  const playBtn = document.getElementById("play-btn");
+  const pauseBtn = document.getElementById("pause-btn");
+  const repeatBtn = document.getElementById("repeat-btn");
+  const htmlAudio = document.getElementById("html-audio");
+  const audioStatus = document.getElementById("audio-status");
+  const timerDisplay = document.getElementById("timer");
+  const dateInput = document.getElementById("activity-date");
+  const courseSelect = document.getElementById("student-course");
+  const nameSelect = document.getElementById("student-name");
+  const speedBtns = document.querySelectorAll(".speed-btn");
+  const wordCountBadge = document.getElementById("word-count-badge");
+
+  // Set Today's Date
+  dateInput.valueAsDate = new Date();
+
+  // Populate Student Dropdown dynamically
+  courseSelect.addEventListener("change", () => {
+    const selectedCourse = courseSelect.value;
+    nameSelect.innerHTML = "";
+
+    if (selectedCourse && studentsData[selectedCourse]) {
+      nameSelect.disabled = false;
+      const defaultOpt = document.createElement("option");
+      defaultOpt.value = "";
+      defaultOpt.textContent = "-- Selecciona Estudiante --";
+      nameSelect.appendChild(defaultOpt);
+
+      studentsData[selectedCourse].forEach(student => {
+        const opt = document.createElement("option");
+        opt.value = student;
+        opt.textContent = student;
+        nameSelect.appendChild(opt);
+      });
+    } else {
+      nameSelect.disabled = true;
+      const defaultOpt = document.createElement("option");
+      defaultOpt.value = "";
+      defaultOpt.textContent = "-- Primero selecciona curso --";
+      nameSelect.appendChild(defaultOpt);
+    }
+  });
+
+  // Shuffle Utility
+  function shuffle(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // Timer Controls
+  function startTimer() {
+    if (!isTimerRunning) {
+      isTimerRunning = true;
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+        const secs = String(secondsElapsed % 60).padStart(2, '0');
+        timerDisplay.textContent = `Time: ${mins}:${secs}`;
+      }, 1000);
+    }
+  }
+
+  function stopTimer() {
+    clearInterval(timerInterval);
+    isTimerRunning = false;
+  }
+
+  function resetTimer() {
+    stopTimer();
+    secondsElapsed = 0;
+    timerDisplay.textContent = "Time: 00:00";
+  }
+
+  // Initialize Word Chips
+  function initializeWordBank() {
+    wordBank.innerHTML = "";
+    const shuffled = shuffle(targetWords);
+
+    shuffled.forEach((word, index) => {
+      const chip = document.createElement("div");
+      chip.className = "word-chip";
+      chip.textContent = word;
+      chip.draggable = true;
+      chip.id = `chip-${index}`;
+
+      // Drag Events
+      chip.addEventListener("dragstart", (e) => {
+        startTimer();
+        chip.classList.add("dragging");
+        e.dataTransfer.setData("text/plain", chip.id);
+      });
+
+      chip.addEventListener("dragend", () => {
+        chip.classList.remove("dragging");
+      });
+
+      // Tap / Click Selection fallback
+      chip.addEventListener("click", () => {
+        startTimer();
+        if (selectedChip === chip) {
+          chip.classList.remove("selected");
+          selectedChip = null;
+        } else {
+          if (selectedChip) selectedChip.classList.remove("selected");
+          selectedChip = chip;
+          chip.classList.add("selected");
+        }
+      });
+
+      wordBank.appendChild(chip);
+    });
+
+    updateWordCount();
+  }
+
+  function updateWordCount() {
+    const remaining = wordBank.querySelectorAll(".word-chip").length;
+    wordCountBadge.textContent = `${remaining} remaining`;
+  }
+
+  // Setup Drop Zones
+  dropZones.forEach(zone => {
+    zone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      zone.classList.add("drag-over");
+    });
+
+    zone.addEventListener("dragleave", () => {
+      zone.classList.remove("drag-over");
+    });
+
+    zone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      zone.classList.remove("drag-over");
+      const chipId = e.dataTransfer.getData("text/plain");
+      const chip = document.getElementById(chipId);
+      if (chip) placeChipInZone(chip, zone);
+    });
+
+    // Click to place
+    zone.addEventListener("click", () => {
+      startTimer();
+      if (zone.classList.contains("filled")) {
+        returnChipToBank(zone);
+      } else if (selectedChip) {
+        placeChipInZone(selectedChip, zone);
+        selectedChip.classList.remove("selected");
+        selectedChip = null;
+      }
+    });
+  });
+
+  function placeChipInZone(chip, zone) {
+    if (zone.classList.contains("filled")) {
+      returnChipToBank(zone);
+    }
+    zone.textContent = chip.textContent;
+    zone.dataset.chipId = chip.id;
+    zone.classList.add("filled");
+    chip.remove();
+    updateWordCount();
+  }
+
+  function returnChipToBank(zone) {
+    if (!zone.classList.contains("filled")) return;
+
+    const word = zone.textContent;
+    const chipId = zone.dataset.chipId;
+
+    const chip = document.createElement("div");
+    chip.className = "word-chip";
+    chip.textContent = word;
+    chip.draggable = true;
+    chip.id = chipId || `chip-${Date.now()}`;
+
+    chip.addEventListener("dragstart", (e) => {
+      chip.classList.add("dragging");
+      e.dataTransfer.setData("text/plain", chip.id);
+    });
+
+    chip.addEventListener("dragend", () => {
+      chip.classList.remove("dragging");
+    });
+
+    chip.addEventListener("click", () => {
+      if (selectedChip === chip) {
+        chip.classList.remove("selected");
+        selectedChip = null;
+      } else {
+        if (selectedChip) selectedChip.classList.remove("selected");
+        selectedChip = chip;
+        chip.classList.add("selected");
+      }
+    });
+
+    wordBank.appendChild(chip);
+
+    zone.textContent = "";
+    zone.removeAttribute("data-chip-id");
+    zone.classList.remove("filled", "correct", "incorrect");
+    updateWordCount();
+  }
+
+  // Audio Playback Controls
+  playBtn.addEventListener("click", () => {
+    startTimer();
+    htmlAudio.play().then(() => {
+      audioStatus.textContent = "Playing dialogue...";
+    }).catch(() => {
+      audioStatus.textContent = `Error al reproducir '${htmlAudio.getAttribute("src")}'`;
+    });
+  });
+
+  pauseBtn.addEventListener("click", () => {
+    htmlAudio.pause();
+    audioStatus.textContent = "Paused";
+  });
+
+  repeatBtn.addEventListener("click", () => {
+    startTimer();
+    htmlAudio.currentTime = 0;
+    htmlAudio.play().then(() => {
+      audioStatus.textContent = "Replaying dialogue...";
+    }).catch(() => {
+      audioStatus.textContent = `Error al reproducir '${htmlAudio.getAttribute("src")}'`;
+    });
+  });
+
+  speedBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const speed = parseFloat(btn.dataset.speed);
+      htmlAudio.playbackRate = speed;
+      speedBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  });
+
+  // Check Answers
+  document.getElementById("check-btn").addEventListener("click", () => {
+    stopTimer();
+    let score = 0;
+
+    dropZones.forEach(zone => {
+      const userValue = zone.textContent.trim().toLowerCase();
+      const correctAnswer = zone.dataset.answer.trim().toLowerCase();
+
+      if (userValue === correctAnswer) {
+        score++;
+        zone.classList.add("correct");
+        zone.classList.remove("incorrect");
+      } else {
+        zone.classList.add("incorrect");
+        zone.classList.remove("correct");
+      }
+    });
+
+    showResults(score);
+  });
+
+  function showResults(score) {
+    const total = targetWords.length;
+    const scoreDisplay = document.getElementById("score-display");
+    const motivationDisplay = document.getElementById("motivation-display");
+
+    scoreDisplay.textContent = `[${score}/${total}]`;
+
+    if (score === total) {
+      motivationDisplay.textContent = "🎉 Exceptional work! Perfect score! Your listening skills are outstanding!";
+    } else if (score >= Math.ceil(total * 0.8)) {
+      motivationDisplay.textContent = "🌟 Great job! You listened very carefully and got almost all of them correct!";
+    } else if (score >= Math.ceil(total * 0.5)) {
+      motivationDisplay.textContent = "👍 Good attempt! Listen to the dialogue again to spot the missing details.";
+    } else {
+      motivationDisplay.textContent = "💪 Keep practicing! Replay the audio and try again to improve your score.";
+    }
+
+    document.getElementById("results-modal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("results-modal").style.display = "none";
+  }
+
+  // Reset Activity
+  document.getElementById("reset-btn").addEventListener("click", () => {
+    resetTimer();
+    dropZones.forEach(zone => {
+      zone.textContent = "";
+      zone.removeAttribute("data-chip-id");
+      zone.classList.remove("filled", "correct", "incorrect");
+    });
+    initializeWordBank();
+  });
+
+  // Download Student Report with Strict Validation
+  document.getElementById("download-btn").addEventListener("click", () => {
+    const studentCourse = courseSelect.value;
+    const studentName = nameSelect.value;
+
+    // Strict validation requirement
+    if (!studentCourse || !studentName) {
+      alert("⚠️ Debes seleccionar tu Curso y Nombre de estudiante de la lista antes de poder descargar el informe.");
+      return;
+    }
+
+    const date = dateInput.value || "N/A";
+    const timeSpent = timerDisplay.textContent.replace("Time: ", "");
+
+    let correctCount = 0;
+    let details = "";
+
+    dropZones.forEach((zone, idx) => {
+      const userVal = zone.textContent.trim();
+      const expected = zone.dataset.answer.trim();
+      const isCorrect = userVal.toLowerCase() === expected.toLowerCase();
+      if (isCorrect) correctCount++;
+
+      details += `Gap #${idx + 1}: Student Answer = "${userVal || 'EMPTY'}" | Expected = "${expected}" [${isCorrect ? 'CORRECT' : 'INCORRECT'}]\n`;
+    });
+
+    const reportContent = `================================================
+COLEGIO SAN IGNACIO
+LISTENING COMPREHENSION REPORT: MOVIE DISCUSSION
+================================================
+Estudiante    : ${studentName}
+Curso / Grade : ${studentCourse}
+Fecha         : ${date}
+Tiempo Usado  : ${timeSpent}
+Puntaje       : ${correctCount} / ${dropZones.length} (${Math.round((correctCount/dropZones.length)*100)}%)
+================================================
+
+GAP BREAKDOWN:
+------------------------------------------------
+${details}
+================================================
+`;
+
+    const blob = new Blob([reportContent], { type: "text/plain;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Reporte_Listening_${studentName.replace(/\s+/g, '_')}_${studentCourse.replace(/\s+/g, '_')}.txt`;
+    link.click();
+  });
+
+  // Start initialization
+  initializeWordBank();
+</script>
+
+</body>
+</html>
